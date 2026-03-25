@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Family Expense</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="font-family: Arial; padding: 20px;">
+
+  <h2>Family Expense App</h2>
+
+  <input id="amount" placeholder="Amount"><br><br>
+  <input id="category" placeholder="Category"><br><br>
+
+  <button onclick="addExpense()">Save</button>
+
+  <h3>Expenses</h3>
+  <div id="list"></div>
+
+  <script>
+    let expenses = [];
+
+    function addExpense() {
+      let amount = document.getElementById("amount").value;
+      let category = document.getElementById("category").value;
+
+      if (!amount || !category) {
+        alert("Enter all fields");
+        return;
+      }
+
+      expenses.push({ amount, category });
+      display();
+
+      document.getElementById("amount").value = "";
+      document.getElementById("category").value = "";
+    }
+
+    function display() {
+      let list = document.getElementById("list");
+      list.innerHTML = "";
+
+      expenses.forEach(e => {
+        list.innerHTML += `<div>₹${e.amount} - ${e.category}</div>`;
+      });
+    }
+  </script>
+
+</body>
+</html>
