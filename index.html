@@ -4,73 +4,94 @@
   <title>Family Expense PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: Calibri;
-      background: linear-gradient(135deg, #000000, #0f2027);
-      color: cyan;
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at top, #0f2027, #000000);
+      color: white;
       padding: 15px;
     }
 
     h2 {
       text-align: center;
-      text-shadow: 0 0 10px cyan;
-    }
-
-    .box {
-      border: 1px solid cyan;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px cyan;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      background: black;
       color: cyan;
-      border: 1px solid cyan;
+      text-shadow: 0 0 10px cyan, 0 0 20px cyan;
     }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background: red;
-      color: white;
-      border: none;
-      margin-top: 10px;
-      cursor: pointer;
-      box-shadow: 0 0 10px red;
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
     }
 
     .logout {
       background: orange;
-      margin-bottom: 10px;
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 20px rgba(0,255,255,0.2);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      background: black;
+      color: cyan;
+      box-shadow: 0 0 10px cyan inset;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(45deg, red, orange);
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 0 15px red;
+      cursor: pointer;
     }
 
     .card {
-      border: 1px solid cyan;
-      margin-top: 5px;
-      padding: 5px;
-      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 10px;
+      background: rgba(0,255,255,0.1);
+      box-shadow: 0 0 10px cyan;
     }
 
     .delete {
-      float: right;
       color: red;
       cursor: pointer;
+      font-weight: bold;
     }
 
     .hidden { display: none; }
 
-    /* BLAST EFFECT */
+    /* BLAST */
     .blast {
       position: fixed;
       top: 50%;
       left: 50%;
-      font-size: 30px;
+      font-size: 28px;
       transform: translate(-50%, -50%);
       animation: pop 0.8s ease;
     }
@@ -86,59 +107,60 @@
 <body>
 
 <!-- LOGIN -->
-<div id="loginBox" class="box">
+<div id="loginBox" class="glass">
   <h2>🔐 Login</h2>
   <input id="user" placeholder="User ID">
-  <input id="pass" type="password" placeholder="Password">
+  <input id="pass" placeholder="Password" type="password">
   <button onclick="login()">Login</button>
 </div>
 
 <!-- APP -->
 <div id="app" class="hidden">
 
-<button class="logout" onclick="logout()">Logout</button>
+<div class="topbar">
+  <button class="logout" onclick="logout()">Logout</button>
+</div>
 
-<h2 id="welcome"></h2>
+<h2>💰 Family Expense PRO</h2>
 
-<div class="box">
+<div class="glass">
 
   <input type="date" id="date">
 
   <input id="amount" placeholder="Enter Amount">
 
   <select id="category">
-    <option>Food</option>
-    <option>Petrol</option>
-    <option>Grocery</option>
-    <option>Vegetables</option>
-    <option>Gas</option>
-    <option>Purchase</option>
-    <option>Meat</option>
-    <option>Travel</option>
-    <option>Gifts</option>
-    <option>Tea</option>
-    <option>Others</option>
+    <option>Food 🍔</option>
+    <option>Petrol ⛽</option>
+    <option>Grocery 🛒</option>
+    <option>Vegetables 🥦</option>
+    <option>Gas 🔥</option>
+    <option>Purchase 📦</option>
+    <option>Meat 🍗</option>
+    <option>Travel ✈️</option>
+    <option>Gifts 🎁</option>
+    <option>Tea ☕</option>
+    <option>Others 📌</option>
   </select>
 
   <button onclick="addExpense()">Save Expense</button>
-
 </div>
 
-<div class="box">
+<div class="glass">
   <h3>Total: ₹<span id="total">0</span></h3>
 </div>
 
-<div class="box">
+<div class="glass">
   <h3>📅 Day-wise</h3>
   <div id="daywise"></div>
 </div>
 
-<div class="box">
+<div class="glass">
   <h3>📦 Category-wise</h3>
   <div id="categorywise"></div>
 </div>
 
-<div class="box">
+<div class="glass">
   <h3>📊 Expense List</h3>
   <div id="list"></div>
 </div>
@@ -158,8 +180,7 @@ function login() {
 
   if (users.includes(u) && p === password) {
     localStorage.setItem("login", "true");
-    localStorage.setItem("user", u);
-    blast("🎉 Welcome " + u + " Family!");
+    blast("🎉 Login Success");
     showApp();
   } else {
     alert("Invalid Login");
@@ -176,10 +197,6 @@ function logout() {
 function showApp() {
   document.getElementById("loginBox").classList.add("hidden");
   document.getElementById("app").classList.remove("hidden");
-
-  let u = localStorage.getItem("user");
-  document.getElementById("welcome").innerText = "👋 Welcome " + u + " Family";
-
   display();
 }
 
@@ -221,7 +238,7 @@ function display() {
   let catData = {};
   let listHTML = "";
 
-  expenses.forEach((e, i) => {
+  expenses.forEach((e,i)=>{
     total += e.amount;
 
     dayData[e.date] = (dayData[e.date] || 0) + e.amount;
@@ -229,8 +246,8 @@ function display() {
 
     listHTML += `
       <div class="card">
-        ${e.date} → ₹${e.amount} - ${e.category}
-        <span class="delete" onclick="deleteExpense(${i})">❌</span>
+        <div>${e.date} → ₹${e.amount} - ${e.category}</div>
+        <div class="delete" onclick="deleteExpense(${i})">❌</div>
       </div>
     `;
   });
@@ -239,27 +256,26 @@ function display() {
 
   let dayHTML = "";
   for (let d in dayData) {
-    dayHTML += `<div class="card">${d} → ₹${dayData[d]}</div>`;
+    dayHTML += `<div class="card">📅 ${d} → ₹${dayData[d]}</div>`;
   }
   document.getElementById("daywise").innerHTML = dayHTML;
 
   let catHTML = "";
   for (let c in catData) {
-    catHTML += `<div class="card">${c} → ₹${catData[c]}</div>`;
+    catHTML += `<div class="card">📦 ${c} → ₹${catData[c]}</div>`;
   }
   document.getElementById("categorywise").innerHTML = catHTML;
 
   document.getElementById("list").innerHTML = listHTML;
 }
 
-// BLAST EFFECT
+// BLAST
 function blast(msg) {
   let el = document.createElement("div");
   el.className = "blast";
   el.innerText = msg;
 
   document.body.appendChild(el);
-
   setTimeout(() => el.remove(), 800);
 }
 </script>
