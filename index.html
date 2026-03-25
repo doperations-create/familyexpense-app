@@ -1,67 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Family Expense Pro</title>
+  <title>Family Expense PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <!-- FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at top, #0f2027, #000000);
       color: white;
-      padding: 20px;
+      padding: 15px;
     }
 
     h2 {
       text-align: center;
-      color: #00f7ff;
+      color: cyan;
+      text-shadow: 0 0 10px cyan, 0 0 20px cyan;
     }
 
-    .box {
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
+    .glass {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
       border-radius: 15px;
+      padding: 15px;
       margin-bottom: 15px;
-      box-shadow: 0 0 15px rgba(0,255,255,0.3);
+      box-shadow: 0 0 20px rgba(0,255,255,0.2);
     }
 
     input, select {
       width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 10px;
+      padding: 12px;
+      margin-top: 10px;
       border-radius: 10px;
       border: none;
+      background: black;
+      color: cyan;
+      box-shadow: 0 0 10px cyan inset;
     }
 
     button {
       width: 100%;
-      padding: 10px;
-      background: linear-gradient(45deg, #ff416c, #ff4b2b);
-      color: white;
-      border: none;
+      padding: 12px;
+      margin-top: 10px;
       border-radius: 10px;
+      border: none;
+      background: linear-gradient(45deg, red, orange);
+      color: white;
       font-weight: bold;
+      box-shadow: 0 0 15px red;
       cursor: pointer;
+      transition: 0.3s;
     }
 
-    .expense {
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .card {
       display: flex;
       justify-content: space-between;
-      padding: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 10px;
+      background: rgba(0,255,255,0.1);
+      box-shadow: 0 0 10px cyan;
     }
 
     .delete {
       color: red;
       cursor: pointer;
+      font-weight: bold;
     }
 
     .hidden {
       display: none;
+    }
+
+    .total {
+      font-size: 20px;
+      text-align: center;
+      color: lime;
+      text-shadow: 0 0 10px lime;
     }
   </style>
 </head>
@@ -69,59 +92,66 @@
 <body>
 
 <!-- LOGIN -->
-<div id="loginBox" class="box">
+<div id="loginBox" class="glass">
   <h2>🔐 Login</h2>
-  <input id="username" placeholder="Enter Name">
+  <input id="user" placeholder="User ID">
+  <input id="pass" placeholder="Password" type="password">
   <button onclick="login()">Login</button>
 </div>
 
 <!-- APP -->
 <div id="app" class="hidden">
 
-  <h2>💰 Family Expense</h2>
+<h2>💰 Family Expense PRO</h2>
 
-  <div class="box">
-    <input id="amount" placeholder="Amount">
+<div class="glass">
+  <input id="amount" placeholder="Enter Amount">
 
-    <select id="category">
-      <option>Food</option>
-      <option>Petrol</option>
-      <option>Grocery</option>
-      <option>Vegetables</option>
-      <option>Gas</option>
-      <option>Purchase</option>
-      <option>Meat</option>
-      <option>Travel</option>
-      <option>Gifts</option>
-      <option>Tea</option>
-      <option>Others</option>
-    </select>
+  <select id="category">
+    <option>Food 🍔</option>
+    <option>Petrol ⛽</option>
+    <option>Grocery 🛒</option>
+    <option>Vegetables 🥦</option>
+    <option>Gas 🔥</option>
+    <option>Purchase 📦</option>
+    <option>Meat 🍗</option>
+    <option>Travel ✈️</option>
+    <option>Gifts 🎁</option>
+    <option>Tea ☕</option>
+    <option>Others 📌</option>
+  </select>
 
-    <button onclick="addExpense()">Save</button>
-  </div>
+  <button onclick="addExpense()">Save Expense</button>
+</div>
 
-  <div class="box">
-    <h3>Total: ₹<span id="total">0</span></h3>
-  </div>
+<div class="glass total">
+  Total: ₹<span id="total">0</span>
+</div>
 
-  <div class="box">
-    <h3>Expenses</h3>
-    <div id="list"></div>
-  </div>
+<div class="glass">
+  <h3>📊 Expense List</h3>
+  <div id="list"></div>
+</div>
 
 </div>
 
 <script>
-let user = localStorage.getItem("user");
+let users = ["Sanoop","Suganya","Sanviya"];
+let password = "SSS123";
+
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
 // LOGIN
 function login() {
-  let name = document.getElementById("username").value;
-  if (!name) return alert("Enter name");
+  let u = document.getElementById("user").value;
+  let p = document.getElementById("pass").value;
 
-  localStorage.setItem("user", name);
-  showApp();
+  if (users.includes(u) && p === password) {
+    localStorage.setItem("login", "true");
+    showApp();
+  } else {
+    alert("Invalid Login");
+  }
 }
 
 // SHOW APP
@@ -131,7 +161,10 @@ function showApp() {
   display();
 }
 
-if (user) showApp();
+// AUTO LOGIN
+if (localStorage.getItem("login") === "true") {
+  showApp();
+}
 
 // ADD
 function addExpense() {
@@ -143,19 +176,17 @@ function addExpense() {
   expenses.push({
     amount: Number(amount),
     category,
-    user,
     date: new Date().toLocaleDateString()
   });
 
   localStorage.setItem("expenses", JSON.stringify(expenses));
-
   document.getElementById("amount").value = "";
   display();
 }
 
 // DELETE
-function deleteExpense(index) {
-  expenses.splice(index, 1);
+function deleteExpense(i) {
+  expenses.splice(i,1);
   localStorage.setItem("expenses", JSON.stringify(expenses));
   display();
 }
@@ -165,11 +196,11 @@ function display() {
   let total = 0;
   let html = "";
 
-  expenses.forEach((e, i) => {
+  expenses.forEach((e,i)=>{
     total += e.amount;
 
     html += `
-      <div class="expense">
+      <div class="card">
         <div>₹${e.amount} - ${e.category}</div>
         <div class="delete" onclick="deleteExpense(${i})">❌</div>
       </div>
