@@ -7,23 +7,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    body { margin:0; font-family:'Orbitron'; color:white; padding:15px; transition: background 0.5s; }
-    h2 { text-align:center; color:cyan; text-shadow:0 0 10px cyan; }
-    .topbar { display:flex; justify-content:flex-end; }
-    .logout { background:orange; padding:8px 15px; border-radius:8px; border:none; cursor:pointer; }
-    .glass { background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
-      border-radius:15px; padding:15px; margin-bottom:15px; box-shadow:0 0 20px cyan; }
-    input, select { width:100%; padding:10px; margin-top:10px;
-      border-radius:10px; border:none; background:black; color:cyan; }
-    button { width:100%; padding:10px; margin-top:10px;
-      border-radius:10px; border:none; background:linear-gradient(45deg,red,orange); color:white; }
-    .card { display:flex; justify-content:space-between; padding:10px; margin-top:10px;
-      border-radius:10px; background:rgba(0,255,255,0.1); }
-    .delete { color:red; cursor:pointer; }
-    .hidden { display:none; }
-    .blast { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-      animation:pop 0.8s ease; }
-    @keyframes pop { 0%{opacity:0} 50%{opacity:1} 100%{opacity:0} }
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+      padding: 15px;
+      transition: background 0.5s;
+    }
+
+    h2 { text-align: center; color: cyan; text-shadow: 0 0 10px cyan; }
+
+    .topbar { display: flex; justify-content: flex-end; }
+
+    .logout { background: orange; padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; }
+
+    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+      border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 0 20px cyan; }
+
+    input, select {
+      width: 100%; padding: 10px; margin-top: 10px;
+      border-radius: 10px; border: none; background: black; color: cyan;
+    }
+
+    button {
+      width: 100%; padding: 10px; margin-top: 10px;
+      border-radius: 10px; border: none; background: linear-gradient(45deg, red, orange); color: white;
+    }
+
+    .card {
+      display: flex; justify-content: space-between; padding: 10px; margin-top: 10px;
+      border-radius: 10px; background: rgba(0,255,255,0.1);
+    }
+
+    .delete { color: red; cursor: pointer; }
+
+    .hidden { display: none; }
+
+    .blast {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: pop 0.8s ease;
+    }
+
+    @keyframes pop {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
   </style>
 </head>
 
@@ -32,7 +62,7 @@
 <!-- LOGIN -->
 <div id="loginBox" class="glass">
   <h2>🔐 Login</h2>
-  <input id="user" placeholder="Enter Gmail ID or Mobile">
+  <input id="user" placeholder="Enter Gmail ID or Email">
   <input id="pass" placeholder="Password" type="password">
   <button onclick="login()">Login</button>
   <button onclick="registerUser()">Register New User</button>
@@ -76,7 +106,7 @@
       <option>Others 📌</option>
     </select>
 
-    <!-- ✅ NEW: Custom category -->
+    <!-- NEW: Custom category -->
     <input id="customCategory" placeholder="Enter custom category" class="hidden">
 
     <button onclick="addExpense()">Save Expense</button>
@@ -84,7 +114,7 @@
 
   <div class="glass">
     <h3>Total: ₹<span id="total">0</span></h3>
-    <!-- ✅ NEW: Download -->
+    <!-- NEW: Download -->
     <button onclick="downloadCSV()">⬇ Download Report</button>
   </div>
 
@@ -97,7 +127,7 @@
 
 <script>
 
-// ✅ UPDATED: 15 COLORS
+// 🎨 15 BACKGROUNDS
 function changeBackground() {
   const gradients = [
     "radial-gradient(circle at top, #0f2027, #000000)",
@@ -129,35 +159,23 @@ let users = JSON.parse(localStorage.getItem("users")) || [];
 let currentUser = null;
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
-// ✅ OTP ADD (without removing old system)
-let generatedOTP = null;
-
-// LOGIN (UPDATED but old flow intact)
+// LOGIN (UNCHANGED)
 function login() {
   let email = document.getElementById("user").value.trim();
   let password = document.getElementById("pass").value;
 
   let user = users.find(u => u.email === email && u.password === password);
-
   if(user){
-    generatedOTP = Math.floor(1000 + Math.random() * 9000);
-    alert("OTP: " + generatedOTP);
-
-    let entered = prompt("Enter OTP");
-    if(Number(entered) === generatedOTP){
-      currentUser = user.email;
-      localStorage.setItem("login", currentUser);
-      blast("🎉 Login Success");
-      showApp();
-    } else {
-      alert("Wrong OTP");
-    }
+    currentUser = user.email;
+    localStorage.setItem("login", currentUser);
+    blast("🎉 Login Success");
+    showApp();
   } else {
     alert("Invalid Email or Password");
   }
 }
 
-// REGISTER (same)
+// REGISTER (UNCHANGED)
 function registerUser() {
   let email = prompt("Enter Email ID:");
   let password = prompt("Set Password:");
@@ -184,7 +202,7 @@ function logout() {
   location.reload();
 }
 
-// ✅ Others category logic (NEW)
+// 📝 Others Category Logic (NEW)
 document.getElementById("category").addEventListener("change", function() {
   let custom = document.getElementById("customCategory");
   if (this.value === "Others 📌") custom.classList.remove("hidden");
@@ -209,7 +227,7 @@ function addExpense() {
   display();
 }
 
-// DISPLAY
+// DISPLAY (UNCHANGED)
 function display() {
   let total = 0;
   let listHTML = "";
@@ -229,14 +247,14 @@ function display() {
   document.getElementById("list").innerHTML = listHTML;
 }
 
-// DELETE
+// DELETE (UNCHANGED)
 function deleteExpense(i) {
   expenses.splice(i,1);
   localStorage.setItem("expenses", JSON.stringify(expenses));
   display();
 }
 
-// ✅ DOWNLOAD CSV (NEW)
+// 📥 DOWNLOAD CSV (NEW)
 function downloadCSV() {
   let userExpenses = expenses.filter(e => e.user === currentUser);
 
