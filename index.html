@@ -6,92 +6,39 @@
 
   <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(circle at top, #0f2027, #000000);
       color: white;
       padding: 15px;
+      transition: background 0.5s;
     }
 
-    h2 {
-      text-align: center;
-      color: cyan;
-      text-shadow: 0 0 10px cyan, 0 0 20px cyan;
-    }
+    h2 { text-align: center; color: cyan; text-shadow: 0 0 10px cyan, 0 0 20px cyan; }
 
-    .topbar {
-      display: flex;
-      justify-content: flex-end;
-    }
+    .topbar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; }
 
-    .logout {
-      background: orange;
-      padding: 8px 15px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-    }
+    .logout { background: orange; padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; margin-left: 10px; }
 
-    .glass {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 0 20px rgba(0,255,255,0.2);
-    }
+    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
 
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
-      background: black;
-      color: cyan;
-      box-shadow: 0 0 10px cyan inset;
-    }
+    input, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; background: black; color: cyan; box-shadow: 0 0 10px cyan inset; }
 
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(45deg, red, orange);
-      color: white;
-      font-weight: bold;
-      box-shadow: 0 0 15px red;
-      cursor: pointer;
-    }
+    button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; background: linear-gradient(45deg, red, orange); color: white; font-weight: bold; box-shadow: 0 0 15px red; cursor: pointer; }
 
-    .card {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 10px;
-      background: rgba(0,255,255,0.1);
-      box-shadow: 0 0 10px cyan;
-    }
+    .card { display: flex; justify-content: space-between; padding: 10px; margin-top: 10px; border-radius: 10px; background: rgba(0,255,255,0.1); box-shadow: 0 0 10px cyan; }
 
-    .delete {
-      color: red;
-      cursor: pointer;
-      font-weight: bold;
-    }
+    .delete { color: red; cursor: pointer; font-weight: bold; }
 
     .hidden { display: none; }
 
-    /* BLAST */
+    /* Blast animation */
     .blast {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      font-size: 28px;
+      position: fixed; top: 50%; left: 50%; font-size: 28px;
       transform: translate(-50%, -50%);
       animation: pop 0.8s ease;
     }
@@ -101,6 +48,8 @@
       50% { transform: scale(1.5); opacity: 1; }
       100% { transform: scale(1); opacity: 0; }
     }
+
+    #userPic { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; }
   </style>
 </head>
 
@@ -109,93 +58,143 @@
 <!-- LOGIN -->
 <div id="loginBox" class="glass">
   <h2>🔐 Login</h2>
-  <input id="user" placeholder="User ID">
-  <input id="pass" placeholder="Password" type="password">
-  <button onclick="login()">Login</button>
+
+  <div id="g_id_onload"
+       data-client_id="YOUR_GOOGLE_CLIENT_ID"
+       data-context="signin"
+       data-ux_mode="popup"
+       data-callback="handleCredentialResponse">
+  </div>
+
+  <div class="g_id_signin"
+       data-type="standard"
+       data-size="large"
+       data-theme="outline"
+       data-text="signin_with"
+       data-shape="rectangular"
+       data-logo_alignment="left">
+  </div>
 </div>
 
 <!-- APP -->
 <div id="app" class="hidden">
 
-<div class="topbar">
-  <button class="logout" onclick="logout()">Logout</button>
-</div>
+  <div class="topbar">
+    <img id="userPic" src="" alt="User">
+    <span id="userName"></span>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
 
-<h2>💰 Family Expense </h2>
+  <h2>💰 Family Expense</h2>
 
-<div class="glass">
+  <div class="glass">
+    <input type="date" id="date">
+    <input id="amount" placeholder="Enter Amount">
+    <select id="category">
+      <option>Food 🍔</option>
+      <option>Rent 🏠</option>
+      <option>Loan/EMI 💰</option>
+      <option>Petrol ⛽</option>
+      <option>Grocery 🛒</option>
+      <option>Snacks 🍕</option>
+      <option>Festival 🎆</option>
+      <option>Travel 🚗</option>
+      <option>Vegetables 🥦</option>
+      <option>Gas 🔥</option>
+      <option>Purchase 📦</option>
+      <option>Meat 🍗</option>
+      <option>Travel ✈️</option>
+      <option>Gifts 🎁</option>
+      <option>Tea ☕</option>
+      <option>Movie 🎬</option>
+      <option>Function 🎉</option>
+      <option>Hospital 🏥</option>
+      <option>Medicine 💊</option>
+      <option>Party 🎉</option>
+      <option>Others 📌</option>
+    </select>
+    <button onclick="addExpense()">Save Expense</button>
+  </div>
 
-  <input type="date" id="date">
+  <div class="glass">
+    <h3>Total: ₹<span id="total">0</span></h3>
+  </div>
 
-  <input id="amount" placeholder="Enter Amount">
+  <div class="glass">
+    <h3>📅 Day-wise</h3>
+    <div id="daywise"></div>
+  </div>
 
-  <select id="category">
-    <option>Food 🍔</option>
-    <option>Rent 🏠</option>
-     <option>Loan/EMI 💰</option>
-    <option>Petrol ⛽</option>
-    <option>Grocery 🛒</option>
-    <option>snacks🍕</option>
-    <option>Festival🎆</option>
-    <option>Travel🚗</option>
-    <option>Vegetables 🥦</option>
-    <option>Gas 🔥</option>
-    <option>Purchase 📦</option>
-    <option>Meat 🍗</option>
-    <option>Travel ✈️</option>
-    <option>Gifts 🎁</option>
-    <option>Tea ☕</option>
-    <option>Movie 🎬</option>
-    <option>Function🎉</option>
-    <option>Hospital🏥</option>
-    <option>Medicine💊</option>
-     <option>Party 🎉</option>
-    <option>Others 📌</option>
-  </select>
+  <div class="glass">
+    <h3>🗓 Month-wise</h3>
+    <div id="monthwise"></div>
+  </div>
 
-  <button onclick="addExpense()">Save Expense</button>
-</div>
+  <div class="glass">
+    <h3>📦 Category-wise</h3>
+    <div id="categorywise"></div>
+  </div>
 
-<div class="glass">
-  <h3>Total: ₹<span id="total">0</span></h3>
-</div>
-
-<div class="glass">
-  <h3>📅 Day-wise</h3>
-  <div id="daywise"></div>
-</div>
-
-<div class="glass">
-  <h3>📦 Category-wise</h3>
-  <div id="categorywise"></div>
-</div>
-
-<div class="glass">
-  <h3>📊 Expense List</h3>
-  <div id="list"></div>
-</div>
+  <div class="glass">
+    <h3>📊 Expense List</h3>
+    <div id="list"></div>
+  </div>
 
 </div>
 
 <script>
-let users = ["Sanoop","Suganya","Sanviya"];
-let password = "SSS123";
-
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
-// LOGIN
-function login() {
-  let u = document.getElementById("user").value;
-  let p = document.getElementById("pass").value;
-
-  if (users.includes(u) && p === password) {
-    localStorage.setItem("login", "true");
-    blast("🎉 Login Success");
-    showApp();
-  } else {
-    alert("Invalid Login");
-  }
+// RANDOM BACKGROUND
+function changeBackground() {
+  const gradients = [
+    "radial-gradient(circle at top, #0f2027, #000000)",
+    "radial-gradient(circle at top, #1a2a6c, #b21f1f, #fdbb2d)",
+    "radial-gradient(circle at top, #ff5f6d, #ffc371)",
+    "radial-gradient(circle at top, #43cea2, #185a9d)",
+    "radial-gradient(circle at top, #f7971e, #ffd200)"
+  ];
+  const bg = gradients[Math.floor(Math.random() * gradients.length)];
+  document.body.style.background = bg;
 }
+window.onload = changeBackground;
+
+// GOOGLE LOGIN HANDLER
+function handleCredentialResponse(response) {
+  const payload = parseJwt(response.credential);
+  localStorage.setItem("login", JSON.stringify({
+    name: payload.name,
+    email: payload.email,
+    picture: payload.picture
+  }));
+  blast(`🎉 Welcome ${payload.name}`);
+  showApp();
+}
+
+function parseJwt (token) {
+  let base64Url = token.split('.')[1];
+  let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  return JSON.parse(jsonPayload);
+}
+
+// SHOW APP
+function showApp() {
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  const user = JSON.parse(localStorage.getItem("login"));
+  if(user){
+    document.getElementById("userName").innerText = user.name;
+    document.getElementById("userPic").src = user.picture;
+  }
+
+  display();
+}
+
+if(localStorage.getItem("login")) showApp();
 
 // LOGOUT
 function logout() {
@@ -203,18 +202,7 @@ function logout() {
   location.reload();
 }
 
-// SHOW APP
-function showApp() {
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-  display();
-}
-
-if (localStorage.getItem("login") === "true") {
-  showApp();
-}
-
-// ADD
+// ADD EXPENSE
 function addExpense() {
   let date = document.getElementById("date").value;
   let amount = document.getElementById("amount").value;
@@ -223,37 +211,44 @@ function addExpense() {
   if (!date || !amount) return alert("Enter all fields");
 
   expenses.push({ date, amount: Number(amount), category });
-
   localStorage.setItem("expenses", JSON.stringify(expenses));
 
   blast("💥 Added!");
-
   document.getElementById("amount").value = "";
   document.getElementById("date").value = "";
 
   display();
 }
 
-// DELETE
+// DELETE EXPENSE
 function deleteExpense(i) {
   expenses.splice(i,1);
   localStorage.setItem("expenses", JSON.stringify(expenses));
   display();
 }
 
-// DISPLAY
+// DISPLAY EXPENSES
 function display() {
   let total = 0;
   let dayData = {};
+  let monthData = {};
   let catData = {};
   let listHTML = "";
 
   expenses.forEach((e,i)=>{
     total += e.amount;
 
+    // Day-wise
     dayData[e.date] = (dayData[e.date] || 0) + e.amount;
+
+    // Month-wise
+    let month = e.date.slice(0,7);
+    monthData[month] = (monthData[month] || 0) + e.amount;
+
+    // Category-wise
     catData[e.category] = (catData[e.category] || 0) + e.amount;
 
+    // List
     listHTML += `
       <div class="card">
         <div>${e.date} → ₹${e.amount} - ${e.category}</div>
@@ -264,27 +259,29 @@ function display() {
 
   document.getElementById("total").innerText = total;
 
+  // Day-wise
   let dayHTML = "";
-  for (let d in dayData) {
-    dayHTML += `<div class="card">📅 ${d} → ₹${dayData[d]}</div>`;
-  }
+  for (let d in dayData) dayHTML += `<div class="card">📅 ${d} → ₹${dayData[d]}</div>`;
   document.getElementById("daywise").innerHTML = dayHTML;
 
+  // Month-wise
+  let monthHTML = "";
+  for (let m in monthData) monthHTML += `<div class="card">🗓 ${m} → ₹${monthData[m]}</div>`;
+  document.getElementById("monthwise").innerHTML = monthHTML;
+
+  // Category-wise
   let catHTML = "";
-  for (let c in catData) {
-    catHTML += `<div class="card">📦 ${c} → ₹${catData[c]}</div>`;
-  }
+  for (let c in catData) catHTML += `<div class="card">📦 ${c} → ₹${catData[c]}</div>`;
   document.getElementById("categorywise").innerHTML = catHTML;
 
   document.getElementById("list").innerHTML = listHTML;
 }
 
-// BLAST
+// BLAST ANIMATION
 function blast(msg) {
   let el = document.createElement("div");
   el.className = "blast";
   el.innerText = msg;
-
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 800);
 }
