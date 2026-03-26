@@ -4,6 +4,7 @@
   <title>Family Expense</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
@@ -15,45 +16,38 @@
       transition: background 0.5s;
     }
 
-    h2 { text-align: center; color: cyan; text-shadow: 0 0 10px cyan; }
+    h2 { text-align: center; color: cyan; text-shadow: 0 0 10px cyan, 0 0 20px cyan; }
 
-    .topbar { display: flex; justify-content: flex-end; }
+    .topbar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; }
 
-    .logout { background: orange; padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; }
+    .logout { background: orange; padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; margin-left: 10px; }
 
-    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
-      border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 0 20px cyan; }
+    .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 0 20px rgba(0,255,255,0.2); }
 
-    input, select {
-      width: 100%; padding: 10px; margin-top: 10px;
-      border-radius: 10px; border: none; background: black; color: cyan;
-    }
+    input, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; background: black; color: cyan; box-shadow: 0 0 10px cyan inset; }
 
-    button {
-      width: 100%; padding: 10px; margin-top: 10px;
-      border-radius: 10px; border: none; background: linear-gradient(45deg, red, orange); color: white;
-    }
+    button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 10px; border: none; background: linear-gradient(45deg, red, orange); color: white; font-weight: bold; box-shadow: 0 0 15px red; cursor: pointer; }
 
-    .card {
-      display: flex; justify-content: space-between; padding: 10px; margin-top: 10px;
-      border-radius: 10px; background: rgba(0,255,255,0.1);
-    }
+    .card { display: flex; justify-content: space-between; padding: 10px; margin-top: 10px; border-radius: 10px; background: rgba(0,255,255,0.1); box-shadow: 0 0 10px cyan; }
 
-    .delete { color: red; cursor: pointer; }
+    .delete { color: red; cursor: pointer; font-weight: bold; }
 
     .hidden { display: none; }
 
+    /* Blast animation */
     .blast {
-      position: fixed; top: 50%; left: 50%;
+      position: fixed; top: 50%; left: 50%; font-size: 28px;
       transform: translate(-50%, -50%);
       animation: pop 0.8s ease;
     }
 
     @keyframes pop {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      100% { opacity: 0; }
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.5); opacity: 1; }
+      100% { transform: scale(1); opacity: 0; }
     }
+
+    #userPic { width: 32px; height: 32px; border-radius: 50%; margin-right: 10px; display: none; }
   </style>
 </head>
 
@@ -81,7 +75,6 @@
   <div class="glass">
     <input type="date" id="date">
     <input id="amount" placeholder="Enter Amount">
-
     <select id="category">
       <option>Food 🍔</option>
       <option>Rent 🏠</option>
@@ -105,17 +98,26 @@
       <option>Party 🎉</option>
       <option>Others 📌</option>
     </select>
-
-    <!-- NEW: Custom category -->
-    <input id="customCategory" placeholder="Enter custom category" class="hidden">
-
     <button onclick="addExpense()">Save Expense</button>
   </div>
 
   <div class="glass">
     <h3>Total: ₹<span id="total">0</span></h3>
-    <!-- NEW: Download -->
-    <button onclick="downloadCSV()">⬇ Download Report</button>
+  </div>
+
+  <div class="glass">
+    <h3>📅 Day-wise</h3>
+    <div id="daywise"></div>
+  </div>
+
+  <div class="glass">
+    <h3>🗓 Month-wise</h3>
+    <div id="monthwise"></div>
+  </div>
+
+  <div class="glass">
+    <h3>📦 Category-wise</h3>
+    <div id="categorywise"></div>
   </div>
 
   <div class="glass">
@@ -126,40 +128,26 @@
 </div>
 
 <script>
-
-// 🎨 15 BACKGROUNDS
+// RANDOM BACKGROUND
 function changeBackground() {
   const gradients = [
     "radial-gradient(circle at top, #0f2027, #000000)",
     "radial-gradient(circle at top, #1a2a6c, #b21f1f, #fdbb2d)",
     "radial-gradient(circle at top, #ff5f6d, #ffc371)",
     "radial-gradient(circle at top, #43cea2, #185a9d)",
-    "radial-gradient(circle at top, #f7971e, #ffd200)",
-
-    "linear-gradient(45deg,#ff0000,#ff7300)",
-    "linear-gradient(45deg,#00c6ff,#0072ff)",
-    "linear-gradient(45deg,#fc466b,#3f5efb)",
-    "linear-gradient(45deg,#00ff87,#60efff)",
-    "linear-gradient(45deg,#8360c3,#2ebf91)",
-
-    "linear-gradient(45deg,#ff512f,#dd2476)",
-    "linear-gradient(45deg,#1d4350,#a43931)",
-    "linear-gradient(45deg,#00b09b,#96c93d)",
-    "linear-gradient(45deg,#4568dc,#b06ab3)",
-    "linear-gradient(45deg,#ff6a00,#ee0979)"
+    "radial-gradient(circle at top, #f7971e, #ffd200)"
   ];
-
-  document.body.style.background =
-    gradients[Math.floor(Math.random() * gradients.length)];
+  const bg = gradients[Math.floor(Math.random() * gradients.length)];
+  document.body.style.background = bg;
 }
 window.onload = changeBackground;
 
-// STORAGE
+// USERS STORAGE
 let users = JSON.parse(localStorage.getItem("users")) || [];
 let currentUser = null;
 let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
-// LOGIN (UNCHANGED)
+// LOGIN
 function login() {
   let email = document.getElementById("user").value.trim();
   let password = document.getElementById("pass").value;
@@ -175,17 +163,16 @@ function login() {
   }
 }
 
-// REGISTER (UNCHANGED)
+// REGISTER NEW USER
 function registerUser() {
-  let email = prompt("Enter Email ID:");
+  let email = prompt("Enter Email ID for new user:");
   let password = prompt("Set Password:");
-  if(!email || !password) return alert("Required");
-
-  if(users.find(u => u.email === email)) return alert("User exists");
+  if(!email || !password) return alert("Both Email and Password required");
+  if(users.find(u => u.email === email)) return alert("User already exists");
 
   users.push({ email, password });
   localStorage.setItem("users", JSON.stringify(users));
-  alert("Registered!");
+  alert("User Registered! You can now login.");
 }
 
 // SHOW APP
@@ -199,78 +186,82 @@ function showApp() {
 // LOGOUT
 function logout() {
   localStorage.removeItem("login");
+  currentUser = null;
   location.reload();
 }
 
-// 📝 Others Category Logic (NEW)
-document.getElementById("category").addEventListener("change", function() {
-  let custom = document.getElementById("customCategory");
-  if (this.value === "Others 📌") custom.classList.remove("hidden");
-  else custom.classList.add("hidden");
-});
-
-// ADD EXPENSE (only small addition)
+// ADD EXPENSE
 function addExpense() {
   let date = document.getElementById("date").value;
   let amount = document.getElementById("amount").value;
   let category = document.getElementById("category").value;
-  let custom = document.getElementById("customCategory").value;
 
   if (!date || !amount) return alert("Enter all fields");
-
-  if (category === "Others 📌" && custom) category = custom;
 
   expenses.push({ date, amount: Number(amount), category, user: currentUser });
   localStorage.setItem("expenses", JSON.stringify(expenses));
 
   blast("💥 Added!");
+  document.getElementById("amount").value = "";
+  document.getElementById("date").value = "";
+
   display();
 }
 
-// DISPLAY (UNCHANGED)
-function display() {
-  let total = 0;
-  let listHTML = "";
-
-  let userExpenses = expenses.filter(e => e.user === currentUser);
-
-  userExpenses.forEach((e,i)=>{
-    total += e.amount;
-    listHTML += `
-      <div class="card">
-        <div>${e.date} → ₹${e.amount} - ${e.category}</div>
-        <div class="delete" onclick="deleteExpense(${i})">❌</div>
-      </div>`;
-  });
-
-  document.getElementById("total").innerText = total;
-  document.getElementById("list").innerHTML = listHTML;
-}
-
-// DELETE (UNCHANGED)
+// DELETE EXPENSE
 function deleteExpense(i) {
   expenses.splice(i,1);
   localStorage.setItem("expenses", JSON.stringify(expenses));
   display();
 }
 
-// 📥 DOWNLOAD CSV (NEW)
-function downloadCSV() {
+// DISPLAY EXPENSES
+function display() {
+  let total = 0;
+  let dayData = {};
+  let monthData = {};
+  let catData = {};
+  let listHTML = "";
+
+  // Filter expenses for current user
   let userExpenses = expenses.filter(e => e.user === currentUser);
 
-  let csv = "Date,Amount,Category\n";
-  userExpenses.forEach(e => {
-    csv += `${e.date},${e.amount},${e.category}\n`;
+  userExpenses.forEach((e,i)=>{
+    total += e.amount;
+    dayData[e.date] = (dayData[e.date] || 0) + e.amount;
+    let month = e.date.slice(0,7);
+    monthData[month] = (monthData[month] || 0) + e.amount;
+    catData[e.category] = (catData[e.category] || 0) + e.amount;
+
+    listHTML += `
+      <div class="card">
+        <div>${e.date} → ₹${e.amount} - ${e.category}</div>
+        <div class="delete" onclick="deleteExpense(${i})">❌</div>
+      </div>
+    `;
   });
 
-  let blob = new Blob([csv], { type: 'text/csv' });
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "expenses.csv";
-  a.click();
+  document.getElementById("total").innerText = total;
+
+  // Day-wise
+  let dayHTML = "";
+  for (let d in dayData) dayHTML += `<div class="card">📅 ${d} → ₹${dayData[d]}</div>`;
+  document.getElementById("daywise").innerHTML = dayHTML;
+
+  // Month-wise
+  let monthHTML = "";
+  for (let m in monthData) monthHTML += `<div class="card">🗓 ${m} → ₹${monthData[m]}</div>`;
+  document.getElementById("monthwise").innerHTML = monthHTML;
+
+  // Category-wise
+  let catHTML = "";
+  for (let c in catData) catHTML += `<div class="card">📦 ${c} → ₹${catData[c]}</div>`;
+  document.getElementById("categorywise").innerHTML = catHTML;
+
+  document.getElementById("list").innerHTML = listHTML;
 }
 
-// BLAST
+// BLAST ANIMATION
 function blast(msg) {
   let el = document.createElement("div");
   el.className = "blast";
@@ -279,12 +270,11 @@ function blast(msg) {
   setTimeout(() => el.remove(), 800);
 }
 
-// AUTO LOGIN
+// Auto-login if stored
 if(localStorage.getItem("login")) {
   currentUser = localStorage.getItem("login");
   showApp();
 }
-
 </script>
 
 </body>
